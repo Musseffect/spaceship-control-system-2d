@@ -148,9 +148,9 @@ class vector{
 }
 
 class matrix{
-    w;
+    /*w;
     h;
-    data;
+    data;*/
     constructor(data,w,h){
         this.data = data;
         this.w = w;
