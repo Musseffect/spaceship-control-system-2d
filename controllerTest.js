@@ -44,6 +44,7 @@ class PID{
 
 
 let ControllerTest = (function(){
+    const makePlot = false;
     var xError = [];
     var yError = [];
     var aError = [];
@@ -97,34 +98,38 @@ let ControllerTest = (function(){
         prevError = {position:new vec2(0.,0.),angle:0};
         body = new RigidBody2D(w,h,1,new vec2(300,300),
             new vec2(0,0),0,0);
-
-        xError = [];
-        yError = [];
-        aError = [];
-        timeArray = [];
-        var xData = [{
-            x:timeArray,
-            y:xError,
-            mode:'lines'
+        if(makePlot){
+            xError = [];
+            yError = [];
+            aError = [];
+            timeArray = [];
+            var xData = [{
+                x:timeArray,
+                y:xError,
+                type: 'scattergl',
+                mode:'lines'
+            }
+            ];
+            var yData = [
+            {
+                x:timeArray,
+                y:yError,
+                type: 'scattergl',
+                mode:'lines'
+            }
+            ];
+            var angleData = [
+            {
+                x:timeArray,
+                y:aError,
+                type: 'scattergl',
+                mode:'lines'
+            }
+            ];
+            Plotly.newPlot('xPlot', xData);
+            Plotly.newPlot('yPlot', yData);
+            Plotly.newPlot('anglePlot', angleData);
         }
-        ];
-        var yData = [
-        {
-            x:timeArray,
-            y:yError,
-            mode:'lines'
-        }
-        ];
-        var angleData = [
-        {
-            x:timeArray,
-            y:aError,
-            mode:'lines'
-        }
-        ];
-        Plotly.newPlot('xPlot', xData);
-        Plotly.newPlot('yPlot', yData);
-        Plotly.newPlot('anglePlot', angleData);
     }
     function getGoal(){
         /*return {
@@ -332,7 +337,7 @@ let ControllerTest = (function(){
         }
         x.scaleSelf(1./scale);
         for(let i=0;i<engines.length;i++){
-            if(x.get(i)>0.001)
+            if(x.get(i)>0.00001)
                 body.applyForce(vec2.scale(engines[i].forceDirection,x.get(i)),engines[i].position);
         }
         //body.applyForce(new vec2(140.*Math.sin(body.angle),140.*Math.cos(body.angle)),new vec2(0,0));
@@ -358,7 +363,8 @@ let ControllerTest = (function(){
         let angleError = Math.atan2(Math.sin(goal.angle-body.angle), Math.cos(goal.angle-body.angle));
         let angularVelocityError = -body.angularVelocity;
         //console.log(angleError)
-        plot(positionError,angleError);
+        if(makePlot)
+            plot(positionError,angleError);
         let input = pid.computeInput(
             new vector([positionError.x,positionError.y, angleError]),
             dt);//values of required input force and torque in local coordinates
