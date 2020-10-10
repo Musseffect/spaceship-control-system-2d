@@ -1,6 +1,6 @@
 class Particle{
-    mass;
-    localPosition;
+    //mass;
+    //localPosition;
     constructor(mass,localPosition){
         this.mass = mass;
         this.localPosition = localPosition;
@@ -8,7 +8,7 @@ class Particle{
 }
 
 class RigitParticleSystem{
-    particles = [];
+    /*particles = [];
     totalMass;
     momentOfInertia;
     referencePoint;
@@ -16,10 +16,15 @@ class RigitParticleSystem{
     velocity = new vec2(0.0,0.0);
     angle = 0.0;
     angularVelocity = 0.0;
-    forces = [];
+    forces = [];*/
     constructor(particles,referencePoint){
         this.particles = particles.splice();
-        this.referencePoint = referencePoint;   
+        this.referencePoint = referencePoint;  
+        this.position = new vec2(0.0,0.0);
+        this.velocity = new vec2(0.0,0.0); 
+        this.angle = 0.0;
+        this.angularVelocity = 0.0;
+        this.forces = [];
         this.computeMassAndInertia();
     }
     computeMassAndInertia(){

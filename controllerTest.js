@@ -1,5 +1,5 @@
 class StateSpaceController{
-    K;
+    //K;
     constructor(K){
         this.K = K;
     }
@@ -10,11 +10,11 @@ class StateSpaceController{
 
 
 class PID{
-    Kp;
+    /*Kp;
     Ki;
     Kd;
     prevError;
-    errorIntegral;
+    errorIntegral;*/
     constructor(Kp,Ki,Kd){
         this.Kp = Kp;
         this.Ki = Ki;
@@ -260,7 +260,7 @@ let ControllerTest = (function(){
         
         context.restore();
     }
-    function applyInputManual(body,input){
+    function applyManualInput(body,input){
         let force = new vec2(input.get(0),input.get(1));
         let torque = input.get(2);            
         let l = Math.min(force.length(),1000)/Math.max(force.length(),0.01);
