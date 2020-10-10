@@ -80,6 +80,7 @@ class RigidBody2D{
 		this.height = h;
 		this.computeInertia();
 	}
+	//Second order integration
 	integrate(dt){
 		this.position.addSelf(vec2.scale(this.velocity,dt));
 		let totalForce = new vec2(0,0);

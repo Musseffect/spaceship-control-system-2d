@@ -43,7 +43,14 @@ class PID{
 }
 
 
-let PIDTestMain = (function(){
+let ControllerTest = (function(){
+    var xError = [];
+    var yError = [];
+    var aError = [];
+    var timeArray = [];
+
+
+
     let path = [
         {position:new vec2(0.5,0.5),angle:0,time:1},
         {position:new vec2(0.75,0.75),angle:0,time:8},
@@ -79,7 +86,7 @@ let PIDTestMain = (function(){
     let ssc = new StateSpaceController(new matrix([
         42,55.5,0,0,0,0,
         0,0,42,55.5,0,0,
-        0,0,0,0,152,225.5
+        0,0,0,0,152,325.5
     ],6,3));
     function reset(){
         currentVertex = 0;
@@ -89,7 +96,35 @@ let PIDTestMain = (function(){
         integral = {position:new vec2(0.,0.),angle:0};
         prevError = {position:new vec2(0.,0.),angle:0};
         body = new RigidBody2D(w,h,1,new vec2(300,300),
-        new vec2(0,0),0,0);
+            new vec2(0,0),0,0);
+
+        xError = [];
+        yError = [];
+        aError = [];
+        timeArray = [];
+        var xData = [{
+            x:timeArray,
+            y:xError,
+            mode:'lines'
+        }
+        ];
+        var yData = [
+        {
+            x:timeArray,
+            y:yError,
+            mode:'lines'
+        }
+        ];
+        var angleData = [
+        {
+            x:timeArray,
+            y:aError,
+            mode:'lines'
+        }
+        ];
+        Plotly.newPlot('xPlot', xData);
+        Plotly.newPlot('yPlot', yData);
+        Plotly.newPlot('anglePlot', angleData);
     }
     function getGoal(){
         /*return {
@@ -190,6 +225,25 @@ let PIDTestMain = (function(){
         prevError = currentError;
         window.requestAnimationFrame(frame);
     }*/
+	function plot(positionError,angleError){
+        /*xError = xError.concat(positionError.x);
+        yError = yError.concat(positionError.y);
+        aError = aError.concat(angleError);
+        timeArray = timeArray.concat(time);*/
+        xError.push(positionError.x);
+        yError.push(positionError.y);
+        aError.push(angleError);
+        timeArray.push(time);
+        if(timeArray.length>300){
+            xError.splice(0,100);
+            yError.splice(0,100);
+            aError.splice(0,100);
+            timeArray.splice(0,100);
+        }
+        Plotly.update('xPlot', {x:[timeArray],y:[xError]});
+        Plotly.update('yPlot', {x:[timeArray],y:[yError]});
+        Plotly.update('anglePlot', {x:[timeArray],y:[aError]});
+	}
     function drawGoal(goal){
 		context.clearRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#000000FF";
@@ -278,10 +332,10 @@ let PIDTestMain = (function(){
         }
         x.scaleSelf(1./scale);
         for(let i=0;i<engines.length;i++){
-            body.applyForce(vec2.scale(engines[i].forceDirection,x.get(i)),engines[i].position);
+            if(x.get(i)>0.001)
+                body.applyForce(vec2.scale(engines[i].forceDirection,x.get(i)),engines[i].position);
         }
         //body.applyForce(new vec2(140.*Math.sin(body.angle),140.*Math.cos(body.angle)),new vec2(0,0));
-        
     }
     function frame(timestamp){
         if(!time){
@@ -303,7 +357,8 @@ let PIDTestMain = (function(){
         let velocityError = body.projectVecWtoL(vec2.sub(new vec2(0.,0.),body.velocity));
         let angleError = Math.atan2(Math.sin(goal.angle-body.angle), Math.cos(goal.angle-body.angle));
         let angularVelocityError = -body.angularVelocity;
-        console.log(angleError)
+        //console.log(angleError)
+        plot(positionError,angleError);
         let input = pid.computeInput(
             new vector([positionError.x,positionError.y, angleError]),
             dt);//values of required input force and torque in local coordinates

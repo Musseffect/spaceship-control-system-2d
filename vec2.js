@@ -33,8 +33,11 @@ class vec2{
 	static mul(a,b){
 		return new vec2(a.x*b.x,a.y*b.y)
 	}
+	lengthSqr(){
+		return vec2.dot(this,this);
+	}
 	length(){
-		return Math.sqrt(this.x*this.x+this.y*this.y);
+		return Math.sqrt(this.lengthSqr());
 	}
 	static dist(a,b){
 		return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));

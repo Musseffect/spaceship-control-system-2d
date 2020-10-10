@@ -3,18 +3,12 @@ function mod(x,n){
 }
 
 let TestMovementMain = (function(){
-	let body = new RigidBody2D(40,10,1,new vec2(300,300),
-	new vec2(0,0),0,0);
+	let body = null;
+	let frames = 0;
 	let time = undefined;
 	let start = undefined;
-	function reset(){
-		body = new RigidBody2D(40,10,1,new vec2(300,300),
-	new vec2(0,0),0,0);
-		frames = 0;
-	}
 	let canvas = document.getElementById("canvas");
 	let context = canvas.getContext("2d");
-	let frames = 0;
 	function frame(timestamp){
 		body.resetForces();
 		if(!time){
@@ -46,6 +40,7 @@ let TestMovementMain = (function(){
 		body.position.y = mod(body.position.y,600);
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		body.draw(context);
+		plot();
 		frames++;
 		window.requestAnimationFrame(frame);
 	}
